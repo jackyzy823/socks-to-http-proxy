@@ -25,11 +25,11 @@ use tokio::net::TcpListener;
 #[group()]
 struct Auths {
     /// Socks5 username
-    #[arg(short = 'u', long, required = false)]
+    #[arg(short = 'u', long, required = false, env = "STHP_AUTH_USERNAME")]
     username: String,
 
     /// Socks5 password
-    #[arg(short = 'P', long, required = false)]
+    #[arg(short = 'P', long, required = false, env = "STHP_AUTH_PASSWORD")]
     password: String,
 }
 
@@ -37,21 +37,22 @@ struct Auths {
 #[command(author, version, about,long_about=None)]
 struct Cli {
     /// port where Http proxy should listen
-    #[arg(short, long, default_value_t = 8080)]
+    #[arg(short, long, default_value_t = 8080, env = "STHP_PORT")]
     port: u16,
 
-    #[arg(long, default_value = "0.0.0.0")]
+    // TODO: generate env just from prefix and arg name
+    #[arg(long, default_value = "0.0.0.0", env = "STHP_LISTEN_IP")]
     listen_ip: Ipv4Addr,
 
     #[command(flatten)]
     auth: Option<Auths>,
 
     /// Socks5 proxy address
-    #[arg(short, long, default_value = "127.0.0.1:1080")]
+    #[arg(short, long, default_value = "127.0.0.1:1080", env = "STHP_SOCKS_ADDRESS")]
     socks_address: SocketAddr,
 
     /// Comma-separated list of allowed domains
-    #[arg(long, value_delimiter = ',')]
+    #[arg(long, value_delimiter = ',', env = "STHP_ALLOWED_DOMAINS")]
     allowed_domains: Option<Vec<String>>,
 }
 
